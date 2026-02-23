@@ -108,6 +108,9 @@ plt.show()
 housing.plot(kind = "scatter", x= "median_income", y = "median_house_value", alpha = 0.1)
 plt.show()
 
+kkkekekeke
+eekee
+
 
 #-------------------Looking for correlations--------------------
 
