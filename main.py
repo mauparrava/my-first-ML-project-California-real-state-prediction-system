@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OrdinalEncoder
 # Optional: nicer plots
 plt.style.use('ggplot')
 plt.rcParams['figure.figsize'] = (12, 8)
@@ -108,8 +109,6 @@ plt.show()
 housing.plot(kind = "scatter", x= "median_income", y = "median_house_value", alpha = 0.1)
 plt.show()
 
-kkkekekeke
-eekee
 
 
 #-------------------Looking for correlations--------------------
@@ -129,6 +128,12 @@ housing.dropna(subset = ["total_bedrooms"])
 imputer = SimpleImputer(strategy = "median")
 #----copy of the data without the text attribute-----
 housing_num = housing.drop("ocean_proximity", axis = 1)
+
+
+housing_cat = housing["ocean_proximity"]
+ordinal_encoder = OrdinalEncoder()
+housing_cat_encoded = ordinal_encoder.fit_transform(housing[["ocean_proximity"]])   # ← double brackets!
+print(housing_cat_encoded.shape[:10])
 
 # You can now work with strat_train_set for EDA and model building
 # Save them if you want:
