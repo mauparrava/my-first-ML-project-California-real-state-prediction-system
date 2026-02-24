@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OrdinalEncoder
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import BaseEstimator, TransformerMixin
 # Optional: nicer plots
 plt.style.use('ggplot')
 plt.rcParams['figure.figsize'] = (12, 8)
@@ -134,6 +136,30 @@ housing_cat = housing["ocean_proximity"]
 ordinal_encoder = OrdinalEncoder()
 housing_cat_encoded = ordinal_encoder.fit_transform(housing[["ocean_proximity"]])   # ← double brackets!
 print(housing_cat_encoded.shape[:10])
+
+cat_encoder = OneHotEncoder()
+housing_cat_1hot = cat_encoder.fit_transform(housing[["ocean_proximity"]])   # ← double brackets = DataFrame
+housing_cat_1hot.toarray()
+cat_encoder.categories_
+
+rooms_ix, bedrooms_ix, population_ix, households_ix = 3,4,5,6
+class CombineAttributesAdder (BaseEstimator, TransformerMixin):
+    def __init__(self, add_bedrooms_per_room = True):
+        self.add_bedrooms_per_room = add_bedrooms_per_room
+    def fit(self, X, y=None):
+        return self
+    def transform(self, X, y=None):
+        rooms_per_household = X[:,rooms_ix]/X[:,households_ix]
+        population_per_household = X[:,population_ix]/X[:,households_ix]
+        if self.add_bedrooms_per_room:
+            bedrooms_per_room = X[:,bedrooms_ix]/X[:,rooms_ix]
+            return np.c_[X, rooms_per_household, bedrooms_per_room, population_per_household]
+
+        else:
+            return np.c_[X, rooms_per_household, population_per_household]
+        attr_adder = CombinedAttributesAdder(add_bedrooms_per_room = False)
+        housing_extra_attribs = attr_adder.transform(housing.values)
+
 
 # You can now work with strat_train_set for EDA and model building
 # Save them if you want:
